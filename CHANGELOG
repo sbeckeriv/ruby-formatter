@@ -1,0 +1,31 @@
+Change Log
+
+Rev 0.6.1
+SVN Rex 54
+
+	Feature:
+		Faster, See preformance change file in svn
+
+	Fixes:
+		Regx for removing user input (regx and strings)
+		Regx for finding do statements is improved
+		Sending wrong string to one_liner? 
+
+Rev 0.6.0
+	Feature:
+		Created a class out of the formatter
+
+	Fixes:
+		User strings and regx are removed
+		Changed some params to no args
+		Remove comments before checking syntax
+		Supports Here docs
+		Supports post while statements
+		Supports one line rescue statements
+		Better error message
+
+Rev 0.5.0
+	Features:
+		Formats
+		Debug option
+		Has Arugments

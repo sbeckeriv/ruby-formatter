@@ -1,0 +1,180 @@
+2,61c2,85
+< =begin
+< Simple Ruby Formatter
+< Created by: Stephen Becker IV
+< Contact: sbeckeriv@gmail.com
+< SVN: http://svn.stephenbeckeriv.com/code/ruby_formatter/
+< 
+< Its been done before RadRails did,
+< http://vim.sourceforge.net/tips/tip.php?tip_id=1368 that guy did it, but I did
+< not look for a ruby formatter untill i was done.
+< 
+< It is called simple formatting because it is. I have the concept of 3 differnt
+< indent actions In, Out and Both. I have mixed the concept of indenting and
+< outdenting. Out means you have added white space and in means you remove a layer
+< of white space.
+< 
+< Basic logic
+< 	Decrease current depth if
+< 			((the it is not a one line if unless statment
+< 			(need to lookfor more oneline blocks) and it ends with end
+< 			or if the } count is larger then {)
+< 		or
+< 			the first word is in the both list)
+< 			
+< 		and
+< 			depth is larger then zero
+< 			
+< 	Increase current depth if
+< 			It is not a one liner
+< 		and
+< 			(the word is in the out list
+< 		or
+< 			the word is in the both list
+< 		or
+< 			it looks like a start block)
+< 		and
+< 			temp_depth is nil (used for = comment blocks)
+< 
+< 
+< Sure there are some regx's and a crap load of gsubs, but it still simple. Its
+< not like its a pychecker (http://www.metaslash.com/brochure/ipc10.html)
+< 
+< 
+< required:
+< -f file/loc
+< -f file1,file2,file3
+< Its the best idea i have for taking more then one file S
+< 
+< maybe i will add a prompt if one is not passed in.
+< 
+< optional:
+< -s # will change the indent to a space count of # per level
+< by default we space with 1 tab per level
+< 
+< ruby simple_formatter.rb -s 3 -b -f /moo/cluck/cow.rb
+< runs with the indent of 3 spaces,creates a backup file, and formats moo/cluck/cow.rb
+< 
+< 
+< Tested with random files off of koders.com
+< =end
+< 
+---
+> # 
+> # == Synopsis
+> #
+> # Simple Ruby Formatter
+> #
+> # Created by: Stephen Becker IV
+> # Contact: sbeckeriv@gmail.com
+> # SVN: http://svn.stephenbeckeriv.com/code/ruby_formatter/
+> # 
+> # Its been done before RadRails did,
+> # http://vim.sourceforge.net/tips/tip.php?tip_id=1368 that guy did it, but I did
+> # not look for a ruby formatter untill i was done.
+> # 
+> # It is called simple formatting because it is. I have the concept of 3 differnt
+> # indent actions In, Out and Both. I have mixed the concept of indenting and
+> # outdenting. Out means you have added white space and in means you remove a layer
+> # of white space.
+> # 
+> # Basic logic
+> # 	Decrease current depth if
+> # 			((the it is not a one line if unless statment
+> # 			(need to lookfor more oneline blocks) and it ends with end
+> # 			or if the } count is larger then {)
+> # 		or
+> # 			the first word is in the both list)
+> # 			
+> # 		and
+> # 			depth is larger then zero
+> # 			
+> # 	Increase current depth if
+> # 			It is not a one liner
+> # 		and
+> # 			(the word is in the out list
+> # 		or
+> # 			the word is in the both list
+> # 		or
+> # 			it looks like a start block)
+> # 		and
+> # 			temp_depth is nil (used for = comment blocks)
+> # 
+> # 
+> # Sure there are some regx's and a crap load of gsubs, but it still simple. Its
+> # not like its a pychecker (http://www.metaslash.com/brochure/ipc10.html)
+> # 
+> # == Usage
+> # 
+> # ruby [options] filelist
+> #
+> # options:
+> #   -s # will change the indent to a space count of # per level
+> #        by default we space with 1 tab per level
+> #   -b # create a backup file
+> # 
+> # examples:
+> # ruby simple_formatter.rb -s 3 -b /moo/cluck/cow.rb
+> # runs with the indent of 3 spaces,creates a backup file, and formats moo/cluck/cow.rb
+> # 
+> # 
+> # Tested with random files off of koders.com
+> # 
+> #
+> 
+> require 'getoptlong'
+> require 'rdoc/usage'
+> 
+> opts = GetoptLong.new(
+>     [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
+>     [ '--spaces', '-s', GetoptLong::OPTIONAL_ARGUMENT ],
+>     [ '--backup', '-b', GetoptLong::OPTIONAL_ARGUMENT ]
+>   )
+> 
+> space_count = 2
+> backup = false
+> 
+> opts.each do |opt, arg|
+>   case opt
+>     when '--help'
+>       RDoc::usage
+>     when '--spaces'
+>       space_count = arg.to_i
+>     when '--backup'
+>       backup = true
+>   end
+> end
+62a87,90
+> if ARGV.length < 1
+>   puts "Missing filelist argument (try --help)"
+>   exit 0
+> end
+63a92
+> array_loc = ARGV
+65,72d93
+< #args
+< file_loc = nil
+< if ARGV.include?("-f")
+< 	array_loc = (ARGV[ARGV.index("-f")+1]).split(",")
+< else
+< 	put "you need to pass in the file with a -f. sorry"
+< 	raise "you need to pass in the file with a -f. sorry"
+< end
+79,84c100
+< 	spaces = nil
+< 	if ARGV.include?("-s")
+< 		c = (ARGV[ARGV.index("-s")+1].to_i)
+< 		
+< 		spaces =  " "*c
+< 	end
+---
+>   spaces =  " "*space_count
+192c208
+< 	FileUtils.cp("#{file_loc}","#{file_loc}.bk.#{Time.now}") if ARGV.include?("-b")
+---
+> 	FileUtils.cp("#{file_loc}","#{file_loc}.bk.#{Time.now}") if backup
+197c213
+< }
+\ No newline at end of file
+---
+> }
