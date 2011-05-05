@@ -1,4 +1,8 @@
 Change Log
+Rev 0.6.2
+Moved to git
+  Fixes
+    Fixed regex to detect strings brought to my attention by Stephen Paul Weber 
 
 Rev 0.6.1
 SVN Rex 54
