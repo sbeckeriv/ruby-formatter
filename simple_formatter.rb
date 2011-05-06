@@ -125,14 +125,14 @@ def check_ends?(string)
 	return true if (string.scan(/\{/).size < string.scan(/\}/).size) || string.match(CHECK_ENDS_RX)
 	false
 end
-IN_OUTS_RX = /^(def|class|module|begin|case|if|unless|loop|while|until|for)/
+IN_OUTS_RX = /^(def|class|module|begin|case|if|unless|loop|while|until|for|class\s+<<\s+self)/
 #look at first work does it start with one of the out works
 def in_outs?(string)
 	string.sub!(/\(.*\)/, "")
 	return true if string.lstrip.match(IN_OUTS_RX) && string.strip.size == $1.strip.size
 	false
 end
-IN_BOTH_RX = /^(elsif|else|when|rescue|ensure)/
+IN_BOTH_RX = /^(elsif|else|when|rescue|ensure|raise)/
 #look at first work does it start with one of the both words?
 def in_both?(string)
 	return true if string.lstrip.match(IN_BOTH_RX) && string.strip.size == $1.strip.size
