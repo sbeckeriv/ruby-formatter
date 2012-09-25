@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
-#
+# encoding: utf-8
 # == Synopsis
 #
 # Simple Ruby Formatter
-#
+# encoding: utf-8
 # Created by: Stephen Becker IV
 # Contributions: Andrew Nutter-Upham
 # Contact: sbeckeriv@gmail.com
@@ -65,11 +65,11 @@
 require 'getoptlong'
 require "fileutils"
 require "pp"
-$escape_strings = {:regex=>"EsCaPedReGex",:string=>"EsCaPeDStRiNg"}
+$escape_strings = {:regex => "EsCaPedReGex",:string => "EsCaPeDStRiNg"}
 begin
-	require 'rdoc/usage'
+  require 'rdoc/usage'
 rescue Exception => e
-	#eat the no load of rdocs?
+  #eat the no load of rdocs?
 end
 opts = GetoptLong.new(
 [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
@@ -81,26 +81,26 @@ space_count = nil
 backup = false
 files = []
 opts.each do | opt, arg|
-	case opt
-	when '--help'
-		begin
-			RDoc::usage
-		rescue Exception =>e
-			puts "If you want to use rdocs you need to install it"
-			exit(-1)
-		end
-	when '--spaces'
-		space_count = arg.to_i
-	when '--backup'
-		backup = true
-	when '--debug'
-		::DEBUG_ME = true
-	end
+  case opt
+  when '--help'
+    begin
+      RDoc::usage
+    rescue Exception => e
+      puts "If you want to use rdocs you need to install it"
+      exit(-1)
+    end
+  when '--spaces'
+    space_count = arg.to_i
+  when '--backup'
+    backup = true
+  when '--debug'
+    ::DEBUG_ME = true
+  end
 end
 require "profile" if ::DEBUG_ME
 if ARGV.length < 1
-	puts "Missing filelist argument (try --help)"
-	exit 0
+  puts "Missing filelist argument (try --help)"
+  exit 0
 end
 array_loc = ARGV
 #find if the string is a start block
@@ -110,8 +110,8 @@ array_loc = ARGV
 # and ( { out number the } or it includes do
 DO_RX = /\sdo\s*$/
 def start_block?(string)
-	return true if  string.gsub(/\|.*\|/, "").match(DO_RX) || (string.scan(/\{/).size > string.scan(/\}/).size)
-	false
+  return true if  string.gsub(/\|.*\|/, "").match(DO_RX) || (string.scan(/\{/).size > string.scan(/\}/).size)
+  false
 end
 #is this an end block?
 #rules
@@ -120,132 +120,132 @@ end
 #or } out number {
 CHECK_ENDS_RX = /end$|end\s+while/
 def check_ends?(string)
-	#check for one liners end and }
-	#string = just_the_string_please(string)
-	return true if (string.scan(/\{/).size < string.scan(/\}/).size) || string.match(CHECK_ENDS_RX)
-	false
+  #check for one liners end and }
+  #string = just_the_string_please(string)
+  return true if (string.scan(/\{/).size < string.scan(/\}/).size) || string.match(CHECK_ENDS_RX)
+  false
 end
 IN_OUTS_RX = /^(def|class|module|begin|case|if|unless|loop|while|until|for|class\s+<<\s+self)/
 #look at first work does it start with one of the out works
 def in_outs?(string)
-	string.sub!(/\(.*\)/, "")
-	return true if string.lstrip.match(IN_OUTS_RX) && string.strip.size == $1.strip.size
-	false
+  string.sub!(/\(.*\)/, "")
+  return true if string.lstrip.match(IN_OUTS_RX) && string.strip.size == $1.strip.size
+  false
 end
 IN_BOTH_RX = /^(elsif|else|when|rescue|ensure|raise)/
 #look at first work does it start with one of the both words?
 def in_both?(string)
-	return true if string.lstrip.match(IN_BOTH_RX) && string.strip.size == $1.strip.size
-	false
+  return true if string.lstrip.match(IN_BOTH_RX) && string.strip.size == $1.strip.size
+  false
 end
 #extra formatting for the line
 #we wrap = with spaces
 #JUST_STRING_PLEASE_RX = /^#.*|\/.*\/|"([^"])*"|'([^'])*'/
 LINE_CLEAN_UP_RX = /[a-zA-Z\]\'\"{\d]+=[a-zA-Z\[\'\"{\d]+/
 def line_clean_up(x)
-	#this formatts strings and regexs remove and add in replacement works
+  #this formatts strings and regexs remove and add in replacement works
 
-	x.gsub!(/\\\//,$escape_strings[:regex])
-	strings = x.scan(/#.*|["'\/].*?["'\/]/)
-	strings.each { | str |
-		x.sub!(str, $escape_strings[:string])
-	}
-	#lofted code from java formatter #{add in link}
-	# replace "){" with ") {"
-	x.sub!(/\)\s*\{/, ") {")
-	# replace "return(" with "return ("
-	# replace "if(" with "if ("
-	# replace "while(" with "while ("
-	# replace "switch(" with "switch ("    ruby does not have a switch 
-	# replace "catch(" with "catch ("
-	x.sub!(/\b(return|if|elsif|while|case|catch)\s*\(/, '\1 (')
-	# replace " ;" with ";"
-	# replace " ," with ","
-	x.gsub!(/\s+([\;\,])/, '\1')
-	#replace ",abc" with ", abc"
-	x.gsub!(/\,(\w+)/, ', \1')
+  x.gsub!(/\\\//,$escape_strings[:regex])
+  strings = x.scan(/#.*|["'\/].*?["'\/]/)
+  strings.each { | str |
+    x.sub!(str, $escape_strings[:string])
+  }
+  #lofted code from java formatter #{add in link}
+  # replace "){" with ") {"
+  x.sub!(/\)\s*\{/, ") {")
+  # replace "return(" with "return ("
+  # replace "if(" with "if ("
+  # replace "while(" with "while ("
+  # replace "switch(" with "switch ("    ruby does not have a switch 
+  # replace "catch(" with "catch ("
+  x.sub!(/\b(return|if|elsif|while|case|catch)\s*\(/, '\1 (')
+  # replace " ;" with ";"
+  # replace " ," with ","
+  x.gsub!(/\s+([\;\,])/, '\1')
+  #replace ",abc" with ", abc"
+  x.gsub!(/\,(\w+)/, ', \1')
 
-	x.gsub!(/(\)|"|\w)\s*([\+\-\*\/\&\|\^\%]|\&\&|\|\||[\>\<]|\>\=|\<\=|\=\=|\!\=|\<\<|\>\>|\>\>\>)\s*(?=(\w | "))/, '\1 \2 ')
-	# a space before and after AssignmentOperator
-	x.gsub!(/(\w)\s*(\+\=|\-\=|\*\=|\/\=|\&\=|\|\=|\^\=|\%\=|\<\<\=|\>\>\=|\>\>\>\=)\s*(?=(\w))/, '\1 \2 ')
-	# do not trim spaces
-	x.gsub!(/(\w)\=\s*(?=(\w|"))/, '\1 = ')
-	x.gsub!(/(\w)\s*\=(?=(\w|"))/, '\1 = ')
-	#becker format
-	#not complete list but alot of the common ones.
-	x.sub!(/(\.each|\.collect[!]*|\.map[!]*|\.delete_if|\.sort[!]*|\.each_[pair|key|value|byte|with_index|line|option]|\.reject[!]*|\.reverse_each|\.detect|\.find[_all]*|\.select|\.module_eval|\.all_waits|loop|proc|lambda|fork|at_exit)\s*\{/, '\1 {')
-	x.sub!(/def\s(\w*)?(\(.*?\))/, 'def \1\2') if x.match(/def\s+?(\w*)?\(.*?\)/)
-	x.sub!(/^for\s+(\w*)?\s+in\s+?(.*)$/, 'for \1 in \2') if x.match(/^for\s+(\w*)?\s*?in\s*?(.*)$/)
-	x.gsub!(/(\w)\=>\s*(?=(\w|"|:))/, '\1 => ')
-	x.gsub!(/(\w)\s*\=>(?=(\w|"|:))/, '\1 => ')
-	x.strip!
-	x.gsub!($escape_strings[:string]) {
-		strings.shift
-	}
-	x.gsub!($escape_strings[:regex], "\\\/")
-	return x
+  x.gsub!(/(\)|"|\w)\s*([\+\-\*\/\&\|\^\%]|\&\&|\|\||[\>\<]|\>\=|\<\=|\=\=|\!\=|\<\<|\>\>|\>\>\>)\s*(?=(\w | "))/, '\1 \2 ')
+  # a space before and after AssignmentOperator
+  x.gsub!(/(\w)\s*(\+\=|\-\=|\*\=|\/\=|\&\=|\|\=|\^\=|\%\=|\<\<\=|\>\>\=|\>\>\>\=)\s*(?=(\w))/, '\1 \2 ')
+  # do not trim spaces
+  x.gsub!(/(\w)\=\s*(?=(\w|"))/, '\1 = ')
+  x.gsub!(/(\w)\s*\=(?=(\w|"))/, '\1 = ')
+  #becker format
+  #not complete list but alot of the common ones.
+  x.sub!(/(\.each|\.collect[!]*|\.map[!]*|\.delete_if|\.sort[!]*|\.each_[pair|key|value|byte|with_index|line|option]|\.reject[!]*|\.reverse_each|\.detect|\.find[_all]*|\.select|\.module_eval|\.all_waits|loop|proc|lambda|fork|at_exit)\s*\{/, '\1 {')
+  x.sub!(/def\s(\w*)?(\(.*?\))/, 'def \1\2') if x.match(/def\s+?(\w*)?\(.*?\)/)
+  x.sub!(/^for\s+(\w*)?\s+in\s+?(.*)$/, 'for \1 in \2') if x.match(/^for\s+(\w*)?\s*?in\s*?(.*)$/)
+  x.gsub!(/(\w)\=>\s*(?=(\w|"|:))/, '\1 => ')
+  x.gsub!(/(\w)\s*\=>(?=(\w|"|:))/, '\1 => ')
+  x.strip!
+  x.gsub!($escape_strings[:string]) {
+    strings.shift
+  }
+  x.gsub!($escape_strings[:regex], "\\\/")
+  return x
 end
 
 JUST_STRING_PLEASE_RX = /\/.*\/|"([^"])*"|'([^'])*'|#.*/
 def just_the_string_please(org_string)
-	string = String.new(org_string)
-	#remove escaped chars
-	string.gsub!(/\\\/|\\"|\\'/, "")
-	string.gsub!(JUST_STRING_PLEASE_RX, "")
-	string = string.strip
-	string.sub!(/\b(return|if|while|case|catch)\s*\(/, '\1 (')
-	puts "clean string: #{string}" if ::DEBUG_ME
-	string
+  string = String.new(org_string)
+  #remove escaped chars
+  string.gsub!(/\\\/|\\"|\\'/, "")
+  string.gsub!(JUST_STRING_PLEASE_RX, "")
+  string = string.strip
+  string.sub!(/\b(return|if|while|case|catch)\s*\(/, '\1 (')
+  puts "clean string: #{string}" if ::DEBUG_ME
+  string
 end
 ONE_LINER_RX = /(unless|if).*(then).*end|(begin).*(rescue|ensure|else).*end/
 def one_liner?(string)
-	return true if string.match(ONE_LINER_RX)
-	false
+  return true if string.match(ONE_LINER_RX)
+  false
 end
 
 array_loc.each {|file_loc|
-	f = File.open(file_loc, "r")
-	text = f.read
-	f.close
-	if File.expand_path(file_loc) == File.expand_path($0)
-		$escape_strings = {:regex=>"EsCaPedReGex#{rand(200)}",:string=>"EsCaPeDStRiNg#{rand(200)}"}
-	end
-	new_text = ""
-	current_depth = 0
-	spaces =  " " * space_count if space_count
-	here_doc_ending = nil
-	indenter = spaces || "\t"
-	temp_depth = nil
-	line_count = 1
+  f = File.open(file_loc, "r")
+  text = f.read
+  f.close
+  if File.expand_path(file_loc) == File.expand_path($0)
+    $escape_strings = {:regex => "EsCaPedReGex#{rand(200)}",:string => "EsCaPeDStRiNg#{rand(200)}"}
+  end
+  new_text = ""
+  current_depth = 0
+  spaces =  " " * space_count if space_count
+  here_doc_ending = nil
+  indenter = spaces || "\t"
+  temp_depth = nil
+  line_count = 1
 
-	text.split("\n").each { |x|
-		#comments
-		#The first idea was to leave them alone.
-		#after running a few test i did not like the way it looked
-		if temp_depth
-			puts "In temp_depth #{x} line ♯ #{line_count} here:#{here_doc_ending}" if ::DEBUG_ME
-			new_text << x << "\n"
-			#block comments, its going to get ugly
-			if !x.lstrip.scan(/^\=end/).empty? || (here_doc_ending && x.strip == here_doc_ending.strip)
-				#swap and set
-				puts "swap and set #{x} line # #{line_count}" if ::DEBUG_ME
-				current_depth = temp_depth
-				temp_depth = nil
-				here_doc_ending = nil
-			end
-			line_count += 1
-			next
-		end
-		#block will always be 0 depth
-		#block comments, its going to get ugly
-		unless x.lstrip.scan(/^\=begin/).empty?
-			#swap and set
-			puts "Looking for begin #{x} #{line_count}" if ::DEBUG_ME
-			temp_depth = current_depth
-			current_depth = 0
-		end
-		#here docs have same type of logic for block comments
-		unless x.lstrip.scan(/<<-/).empty?
+  text.split("\n").each { |x|
+    #comments
+    #The first idea was to leave them alone.
+    #after running a few test i did not like the way it looked
+    if temp_depth
+      puts "In temp_depth #{x} line ♯ #{line_count} here:#{here_doc_ending}" if ::DEBUG_ME
+      new_text << x << "\n"
+      #block comments, its going to get ugly
+      if !x.lstrip.scan(/^\=end/).empty? || (here_doc_ending && x.strip == here_doc_ending.strip)
+        #swap and set
+        puts "swap and set #{x} line # #{line_count}" if ::DEBUG_ME
+        current_depth = temp_depth
+        temp_depth = nil
+        here_doc_ending = nil
+      end
+      line_count += 1
+      next
+    end
+    #block will always be 0 depth
+    #block comments, its going to get ugly
+    unless x.lstrip.scan(/^\=begin/).empty?
+      #swap and set
+      puts "Looking for begin #{x} #{line_count}" if ::DEBUG_ME
+      temp_depth = current_depth
+      current_depth = 0
+    end
+    #here docs have same type of logic for block comments
+    unless x.lstrip.scan(/<<-/).empty?
 			#swap and set
 			here_doc_ending = x.lstrip.split(/<<-/).last.strip
 			temp_depth = current_depth

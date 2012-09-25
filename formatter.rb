@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# encoding: utf-8
 #a class for the formatter
 class Formatter
 	attr_reader :indenter, :backup, :debug_me
