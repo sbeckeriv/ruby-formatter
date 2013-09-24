@@ -8,8 +8,8 @@
  SVN: http://svn.stephenbeckeriv.com/code/ruby_formatter/
 
  Its been done before RadRails did,
- http://vim.sourceforge.net/tips/tip.php?tip_id = 1368 that guy did it, but I did
- not look for a ruby formatter until i was done.
+ http://web.archive.org/web/20071118151142/http://www.vim.org/tips/tip.php?tip_id=1368 that guy did it, but I did
+ not look for a ruby formatter until I was done.
 
  It is called simple formatting because it is. I have the concept of 3 differnt
  indent actions In, Out and Both. I have mixed the concept of indenting and
